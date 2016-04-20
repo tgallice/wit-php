@@ -1,0 +1,38 @@
+{
+  "name": "tgallice/wit-php",
+  "description": "Wit.ai php sdk",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thomas Gallice",
+      "email": "tm.gallice@gmail.com",
+      "homepage": "https://github.com/tgallice"
+    }
+  ],
+  "keywords": [
+    "wit.ai",
+    "bot",
+    "wit.ai sdk",
+    "chatbot",
+    "chat bot"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Tgallice\\Wit\\": "src"
+    }
+  },
+  "require-dev": {
+    "phpspec/phpspec": "~2.0"
+  },
+  "require": {
+    "php": ">=5.5.0",
+    "guzzlehttp/guzzle": "^6.2",
+    "psr/log": "^1.0"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  }
+}
