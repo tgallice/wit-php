@@ -5,7 +5,6 @@ namespace Tgallice\Wit;
 use Tgallice\Wit\HttpClient\GuzzleHttpClient;
 use Tgallice\Wit\HttpClient\HttpClient;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 use Tgallice\Wit\Exception\BadResponseException;
 
 class Client
@@ -31,11 +30,6 @@ class Client
     private $client;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var ResponseInterface|null
      */
     private $lastResponse;
@@ -50,11 +44,10 @@ class Client
      */
     public static $allowedMethod = ['POST', 'GET', 'PUT', 'DELETE'];
 
-    public function __construct($accessToken, HttpClient $httpClient = null, LoggerInterface $logger = null)
+    public function __construct($accessToken, HttpClient $httpClient = null)
     {
         $this->accessToken = $accessToken;
         $this->client = $httpClient ?: $this->defaultHttpClient();
-        $this->logger = $logger;
     }
 
     /**
