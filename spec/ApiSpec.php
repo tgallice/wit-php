@@ -24,13 +24,12 @@ class ApiSpec extends ObjectBehavior
     function it_should_get_converse_next_step_with_the_api($client, $response)
     {
         $context = new Context();
-
-        $queryParams = [
+        $query = [
             'session_id' => 'session_id',
             'q' => 'my message',
         ];
 
-        $client->send('POST', '/converse', $queryParams, $context)->willReturn($response);
+        $client->send('POST', '/converse', $context, $query)->willReturn($response);
 
         $this->getConverseNextStep('session_id', 'my message', $context)->shouldReturn(['field' => 'value']);
     }
@@ -68,7 +67,7 @@ class ApiSpec extends ObjectBehavior
         $context = new Context();
         $query = ['context' => json_encode($context), 'foo' => 'bar'];
 
-        $client->send('POST', '/speech', $query, $resource)->willReturn($response);
+        $client->send('POST', '/speech', $resource, $query)->willReturn($response);
 
         $this->getIntentBySpeech($resource, $context, ['foo' => 'bar'])->shouldReturn(['field' => 'value']);
 
@@ -79,16 +78,15 @@ class ApiSpec extends ObjectBehavior
     {
         $context = new Context();
         $query = ['context' => json_encode($context), 'foo' => 'bar'];
+        $file = tempnam(sys_get_temp_dir(), 'test');
 
-        $client->send('POST', '/speech', $query, Argument::that(function ($argument) {
+        $client->send('POST', '/speech', Argument::that(function ($argument) {
             $isResource = is_resource($argument);
 
             fclose($argument);
 
             return $isResource;
-        }))->willReturn($response);
-
-        $file = tempnam(sys_get_temp_dir(), 'test');
+        }), $query)->willReturn($response);
 
         $this->getIntentBySpeech($file, $context, ['foo' => 'bar'])->shouldReturn(['field' => 'value']);
     }

@@ -2,9 +2,8 @@
 
 namespace Tgallice\Wit;
 
-use GuzzleHttp\Client as HttpClient;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\RequestOptions;
+use Tgallice\Wit\HttpClient\GuzzleHttpClient;
+use Tgallice\Wit\HttpClient\HttpClient;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Tgallice\Wit\Exception\BadResponseException;
@@ -27,7 +26,7 @@ class Client
     const DEFAULT_TIMEOUT = 5;
 
     /**
-     * @var ClientInterface client
+     * @var HttpClient client
      */
     private $client;
 
@@ -46,14 +45,15 @@ class Client
      */
     private $accessToken;
 
-    public function __construct($accessToken, ClientInterface $httpClient = null, LoggerInterface $logger = null)
+    /**
+     * @var array
+     */
+    public static $allowedMethod = ['POST', 'GET', 'PUT', 'DELETE'];
+
+    public function __construct($accessToken, HttpClient $httpClient = null, LoggerInterface $logger = null)
     {
         $this->accessToken = $accessToken;
-        $this->client = $httpClient ?: new HttpClient([
-            'base_uri' => self::API_BASE_URI,
-            'timeout' => self::DEFAULT_TIMEOUT,
-            'connect_timeout' => self::DEFAULT_TIMEOUT,
-        ]);
+        $this->client = $httpClient ?: $this->defaultHttpClient();
         $this->logger = $logger;
     }
 
@@ -65,7 +65,7 @@ class Client
      */
     public function post($uri, array $params = [])
     {
-        return $this->send('POST', $uri, [], $params);
+        return $this->send('POST', $uri, $params);
     }
 
     /**
@@ -76,7 +76,7 @@ class Client
      */
     public function get($uri, array $params = [])
     {
-        return $this->send('GET', $uri, $params);
+        return $this->send('GET', $uri, null, $params);
     }
 
     /**
@@ -87,7 +87,7 @@ class Client
      */
     public function put($uri, array $params = [])
     {
-        return $this->send('PUT', $uri, [], $params);
+        return $this->send('PUT', $uri, $params);
     }
 
     /**
@@ -108,20 +108,11 @@ class Client
      *
      * @return ResponseInterface
      */
-    public function send($method, $uri, array $queryParams = [], $postParams = null)
+    public function send($method, $uri, $body = null, array $query = [], array $headers = [], array $options = [])
     {
-        $options = [
-            RequestOptions::QUERY => $queryParams,
-            RequestOptions::HEADERS => $this->getDefaultHeaders()
-        ];
-
-        if (!empty($postParams)) {
-            $type = is_array($postParams) || $postParams instanceof \JsonSerializable ? RequestOptions::JSON : RequestOptions::BODY;
-            $options[$type] = $postParams;
-        }
-
-        $this->lastResponse = $this->client->request($method, $uri, $options);
-
+        $this->validateMethod($method);
+        $headers = array_merge($this->getDefaultHeaders(), $headers);
+        $this->lastResponse = $this->client->send($method, $uri, $body, $query, $headers, $options);
         $this->validateResponse($this->lastResponse);
 
         return $this->lastResponse;
@@ -159,8 +150,6 @@ class Client
     /**
      * @param ResponseInterface $response
      *
-     * @return bool
-     *
      * @throws BadResponseException
      */
     private function validateResponse(ResponseInterface $response)
@@ -170,7 +159,25 @@ class Client
 
             throw new BadResponseException($message, $response);
         }
+    }
 
-        return true;
+    /**
+     * @return HttpClient
+     */
+    private function defaultHttpClient()
+    {
+        return new GuzzleHttpClient();
+    }
+
+    /**
+     * @param $method
+     *
+     * @throw \InvalidArgumentException
+     */
+    private function validateMethod($method)
+    {
+        if (!in_array(strtoupper($method), self::$allowedMethod)) {
+            throw new \InvalidArgumentException(sprintf('"%s" is not in the allowed methods "%s"', $method, implode(', ', self::$allowedMethod)));
+        }
     }
 }
