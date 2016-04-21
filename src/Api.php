@@ -78,7 +78,7 @@ class Api
             $queryParams['context'] = json_encode($context);
         }
 
-        $file = is_resource($file) ? $file : fopen($file, 'r+');
+        $file = is_resource($file) ? $file : fopen($file, 'r');
         $response = $this->client->send('POST', '/speech', $file, $queryParams);
 
         return $this->decodeResponse($response);

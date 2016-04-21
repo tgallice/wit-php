@@ -5,6 +5,7 @@ namespace spec\Tgallice\Wit;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Psr\Http\Message\ResponseInterface;
+use Tgallice\Wit\Client;
 use Tgallice\Wit\Exception\BadResponseException;
 use Tgallice\Wit\HttpClient\HttpClient;
 
@@ -107,5 +108,21 @@ class ClientSpec extends ObjectBehavior
     function it_validate_method_or_trigger_an_exception()
     {
         $this->shouldThrow(\InvalidArgumentException::class)->duringSend('Custom', 'uri');
+    }
+
+    function it_can_define_api_version($httpClient, $response)
+    {
+        $this->beConstructedWith('token', $httpClient, '20160430');
+        $httpClient->send('GET', '/uri', null, [], Argument::withEntry('Accept', 'application/vnd.wit.'.Client::DEFAULT_API_VERSION.'+json'), [])->shouldNotBeCalled();
+        $httpClient->send('GET', '/uri', null, [], Argument::withEntry('Accept', 'application/vnd.wit.20160430+json'), [])->willReturn($response);
+
+        $this->get('/uri');
+    }
+
+    function it_has_a_default_api_version($httpClient, $response)
+    {
+        $httpClient->send('GET', '/uri', null, [], Argument::withEntry('Accept', 'application/vnd.wit.'.Client::DEFAULT_API_VERSION.'+json'), [])->willReturn($response);
+
+        $this->get('/uri');
     }
 }

@@ -17,12 +17,27 @@ class Client
     /*
      * API Version
      */
-    const API_VERSION = '20160330';
+    const DEFAULT_API_VERSION = '20160330';
 
     /**
      * Request default timeout
      */
     const DEFAULT_TIMEOUT = 5;
+
+    /**
+     * @var array
+     */
+    public static $allowedMethod = ['POST', 'GET', 'PUT', 'DELETE'];
+
+    /**
+     * @var string Wit app token
+     */
+    private $accessToken;
+
+    /**
+     * @var string
+     */
+    private $apiVersion;
 
     /**
      * @var HttpClient client
@@ -34,19 +49,10 @@ class Client
      */
     private $lastResponse;
 
-    /**
-     * @var string Wit app token
-     */
-    private $accessToken;
-
-    /**
-     * @var array
-     */
-    public static $allowedMethod = ['POST', 'GET', 'PUT', 'DELETE'];
-
-    public function __construct($accessToken, HttpClient $httpClient = null)
+    public function __construct($accessToken, HttpClient $httpClient = null, $apiVersion = self::DEFAULT_API_VERSION)
     {
         $this->accessToken = $accessToken;
+        $this->apiVersion = $apiVersion;
         $this->client = $httpClient ?: $this->defaultHttpClient();
     }
 
@@ -136,7 +142,7 @@ class Client
         return [
             'Authorization' => 'Bearer '.$this->accessToken,
             // Used the accept field is needed to fix the API version and avoid BC break from the API
-            'Accept' => 'application/vnd.wit.'.self::API_VERSION.'+json',
+            'Accept' => 'application/vnd.wit.'.$this->apiVersion.'+json',
         ];
     }
 
