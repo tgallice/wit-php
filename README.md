@@ -97,7 +97,7 @@ require_once __DIR__.'/vendor/autoload.php';
 
 use Tgallice\Wit\Client;
 use Tgallice\Wit\Api;
-use Tgallice\Wit\Conversation;
+use Tgallice\Wit\Api\Conversation;
 use Custom\MyActionMapping;
 
 $client = new Client('app_token');

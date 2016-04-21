@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Tgallice\Wit;
+namespace spec\Tgallice\Wit\Api;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -42,7 +42,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Tgallice\Wit\Conversation');
+        $this->shouldHaveType('Tgallice\Wit\Api\Conversation');
     }
 
     function it_converse_automatically_and_return_the_last_context($api, $actionMapping)
