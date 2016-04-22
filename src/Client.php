@@ -102,8 +102,10 @@ class Client
     /**
      * @param string $method
      * @param string $uri
-     * @param array $queryParams
-     * @param mixed $postParams
+     * @param mixed $body
+     * @param array $query
+     * @param array $headers
+     * @param array $options
      *
      * @return ResponseInterface
      */
