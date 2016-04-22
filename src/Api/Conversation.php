@@ -1,7 +1,9 @@
 <?php
 
-namespace Tgallice\Wit;
+namespace Tgallice\Wit\Api;
 
+use Tgallice\Wit\ActionMapping;
+use Tgallice\Wit\Api;
 use Tgallice\Wit\Exception\BadResponseException;
 use Tgallice\Wit\Exception\ConversationException;
 use Tgallice\Wit\Exception\InvalidStepException;
@@ -12,6 +14,7 @@ use Tgallice\Wit\Model\Step\Action;
 use Tgallice\Wit\Model\Step\Merge;
 use Tgallice\Wit\Model\Step\Message;
 use Tgallice\Wit\Model\Step\Stop;
+use Tgallice\Wit\StepFactory;
 
 class Conversation
 {

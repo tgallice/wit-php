@@ -29,12 +29,12 @@ class Api
      */
     public function getConverseNextStep($sessionId, $text, Context $context = null)
     {
-        $queryParams = [
+        $query = [
             'session_id' => $sessionId,
             'q' => $text,
         ];
 
-        $response = $this->client->send('POST', '/converse', $queryParams, $context);
+        $response = $this->client->send('POST', '/converse', $context, $query);
 
         return $this->decodeResponse($response);
     }
@@ -78,9 +78,8 @@ class Api
             $queryParams['context'] = json_encode($context);
         }
 
-        $file = is_resource($file) ? $file : fopen($file, 'r+');
-
-        $response = $this->client->send('POST', '/speech', $queryParams, $file);
+        $file = is_resource($file) ? $file : fopen($file, 'r');
+        $response = $this->client->send('POST', '/speech', $file, $queryParams);
 
         return $this->decodeResponse($response);
     }
