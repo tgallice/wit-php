@@ -33,4 +33,17 @@ class GuzzleHttpClientSpec extends ObjectBehavior
 
         $this->send('POST', '/uri', 'body', ['q' => 'test'], ['header' => 'value'], ['timeout' => 10])->shouldReturn($response);
     }
+
+    function it_send_request_with_json_content($guzzleClient, ResponseInterface $response)
+    {
+        $options = [
+            RequestOptions::QUERY => [],
+            RequestOptions::HEADERS => [],
+            RequestOptions::JSON => ['body'],
+        ];
+
+        $guzzleClient->request('POST', '/uri', $options)->willReturn($response);
+
+        $this->send('POST', '/uri', ['body'])->shouldReturn($response);
+    }
 }

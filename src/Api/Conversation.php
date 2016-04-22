@@ -21,7 +21,7 @@ class Conversation
     const MAX_STEPS_ITERATION = 5;
 
     /**
-     * @var API
+     * @var Api
      */
     private $api;
 
