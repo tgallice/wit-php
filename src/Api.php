@@ -3,6 +3,7 @@
 namespace Tgallice\Wit;
 
 use Psr\Http\Message\ResponseInterface;
+use Tgallice\Wit\Api\Speech;
 use Tgallice\Wit\Model\Context;
 
 class Api
@@ -13,11 +14,17 @@ class Api
     private $client;
 
     /**
+     * @var MessageApi
+     */
+    private $messageApi;
+
+    /*
      * @param Client $client
      */
     public function __construct(Client $client)
     {
         $this->client = $client;
+        $this->messageApi = new MessageApi($client);
     }
 
     /**
@@ -40,6 +47,9 @@ class Api
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *             You should use the MessageApi::extractMeaning() instead
+     *
      * @param string $text
      * @param Context|null $context
      * @param array $extraParams
@@ -48,17 +58,7 @@ class Api
      */
     public function getIntentByText($text, Context $context = null, array $extraParams = [])
     {
-        $query = array_merge($extraParams, [
-            'q' => $text,
-        ]);
-
-        if (null !== $context) {
-            $query['context'] = json_encode($context);
-        }
-
-        $response = $this->client->get('/message', $query);
-
-        return $this->decodeResponse($response);
+        return $this->messageApi->extractMeaning($text, $context, $extraParams);
     }
 
     /**

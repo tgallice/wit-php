@@ -34,33 +34,6 @@ class ApiSpec extends ObjectBehavior
         $this->getConverseNextStep('session_id', 'my message', $context)->shouldReturn(['field' => 'value']);
     }
 
-    function it_should_get_intent_by_text($client, $response)
-    {
-        $context = new Context();
-        $query = [
-            'q' => 'my text',
-            'context' => json_encode($context),
-            'foo' => 'bar',
-        ];
-
-        $client->get('/message', $query)->willReturn($response);
-
-        $this->getIntentByText('my text', $context, ['foo' => 'bar'])->shouldReturn(['field' => 'value']);
-    }
-
-    function it_should_get_intent_by_text_without_override_query_message($client, $response)
-    {
-        $context = new Context();
-        $query = [
-            'q' => 'my text',
-            'context' => json_encode($context),
-        ];
-
-        $client->get('/message', $query)->willReturn($response);
-
-        $this->getIntentByText('my text', $context, ['q' => 'other message'])->shouldReturn(['field' => 'value']);
-    }
-
     function it_should_get_intent_by_speech_when_its_a_resource_given($client, $response)
     {
         $resource = fopen('php://temp', 'r+');
