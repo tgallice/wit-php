@@ -21,19 +21,6 @@ class ApiSpec extends ObjectBehavior
         $this->shouldHaveType('Tgallice\Wit\Api');
     }
 
-    function it_should_get_converse_next_step_with_the_api($client, $response)
-    {
-        $context = new Context();
-        $query = [
-            'session_id' => 'session_id',
-            'q' => 'my message',
-        ];
-
-        $client->send('POST', '/converse', $context, $query)->willReturn($response);
-
-        $this->getConverseNextStep('session_id', 'my message', $context)->shouldReturn(['field' => 'value']);
-    }
-
     function it_should_get_message_by_id($client, $response)
     {
         $client->get('/messages/id')->willReturn($response);
