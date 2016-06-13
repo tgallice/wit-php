@@ -3,7 +3,6 @@
 namespace Tgallice\Wit;
 
 use Psr\Http\Message\ResponseInterface;
-use Tgallice\Wit\Api\Speech;
 use Tgallice\Wit\Model\Context;
 
 class Api
@@ -18,13 +17,19 @@ class Api
      */
     private $messageApi;
 
-    /*
+    /**
+     * @var SpeechApi
+     */
+    private $speechApi;
+
+    /**
      * @param Client $client
      */
     public function __construct(Client $client)
     {
         $this->client = $client;
         $this->messageApi = new MessageApi($client);
+        $this->speechApi = new SpeechApi($client);
     }
 
     /**
@@ -62,6 +67,9 @@ class Api
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *             You should use the SpeechApi::extractMeaning() instead
+     *
      * @param string|resource $file
      * @param array|null $context
      * @param array $queryParams
@@ -70,21 +78,12 @@ class Api
      */
     public function getIntentBySpeech($file, Context $context = null, array $queryParams = [])
     {
-        if (!$file || (!is_resource($file) && !is_readable($file))) {
-            throw new \InvalidArgumentException('$file argument must be a readable file path or a valid resource');
-        }
-
-        if (null !== $context) {
-            $queryParams['context'] = json_encode($context);
-        }
-
-        $file = is_resource($file) ? $file : fopen($file, 'r');
-        $response = $this->client->send('POST', '/speech', $file, $queryParams);
-
-        return $this->decodeResponse($response);
+        return $this->speechApi->extractMeaning($file, $context, $queryParams);
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *
      * @param string $messageId
      *
      * @return array|null
