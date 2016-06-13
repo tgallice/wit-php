@@ -4,6 +4,8 @@ namespace spec\Tgallice\Wit\Model;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use Tgallice\Wit\Model\Entity;
+use Tgallice\Wit\Model\EntityValue;
 
 class EntitySpec extends ObjectBehavior
 {
@@ -27,9 +29,15 @@ class EntitySpec extends ObjectBehavior
         $this->getDescription()->shouldReturn('description');
     }
 
-    function it_has_values()
+    function it_has_values(EntityValue $entityValue)
     {
-        $this->getValues()->shouldReturn([]);
+        $this->beConstructedWith('id', [$entityValue]);
+        $this->getValues()->shouldEqual([$entityValue]);
+    }
+
+    function it_has_a_lookups()
+    {
+        $this->getLookups()->shouldReturn([Entity::LOOKUP_KEYWORDS]);
     }
 
     function it_must_be_json_serializable()

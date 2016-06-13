@@ -4,6 +4,10 @@ namespace Tgallice\Wit\Model;
 
 class Entity implements \JsonSerializable
 {
+    const LOOKUP_TRAIT = 'trait';
+
+    const LOOKUP_KEYWORDS = 'keywords';
+
     /**
      * @var string
      */
@@ -20,15 +24,22 @@ class Entity implements \JsonSerializable
     private $description;
 
     /**
-     * @param $id
-     * @param array $values
-     * @param string|null $description
+     * @var string[]
      */
-    public function __construct($id, array $values = [], $description = '')
+    private $lookups;
+
+    /**
+     * @param $id
+     * @param array|EntityValue[] $values
+     * @param string|null $description
+     * @param string[] $lookups
+     */
+    public function __construct($id, array $values = [], $description = '', array $lookups = [Entity::LOOKUP_KEYWORDS])
     {
         $this->id = $id;
         $this->values = $values;
         $this->description = $description;
+        $this->lookups = $lookups;
     }
 
     /**
@@ -48,11 +59,19 @@ class Entity implements \JsonSerializable
     }
 
     /**
-     * @return array
+     * @return array|EntityValue[]
      */
     public function getValues()
     {
         return $this->values;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLookups()
+    {
+        return $this->lookups;
     }
 
     /**
@@ -64,6 +83,7 @@ class Entity implements \JsonSerializable
             'id' => $this->id,
             'values' => $this->values,
             'doc' => $this->description,
+            'lookups' => $this->lookups,
         ];
     }
 }
