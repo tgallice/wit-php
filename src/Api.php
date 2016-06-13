@@ -97,6 +97,17 @@ class Api
     }
 
     /**
+     * @return Client
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *             You should use the ResponseHandler::decodeResponse() instead
+     *
      * @param ResponseInterface $response
      *
      * @return array|null
