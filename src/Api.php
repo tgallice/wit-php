@@ -5,6 +5,9 @@ namespace Tgallice\Wit;
 use Psr\Http\Message\ResponseInterface;
 use Tgallice\Wit\Model\Context;
 
+/**
+ * @deprecated This class is deprecated as of 0.1 and will be removed in 1.0.
+ */
 class Api
 {
     /**
@@ -13,14 +16,35 @@ class Api
     private $client;
 
     /**
+     * @var MessageApi
+     */
+    private $messageApi;
+
+    /**
+     * @var SpeechApi
+     */
+    private $speechApi;
+
+    /**
+     * @var ConverseApi
+     */
+    private $converseApi;
+
+    /**
      * @param Client $client
      */
     public function __construct(Client $client)
     {
         $this->client = $client;
+        $this->messageApi = new MessageApi($client);
+        $this->speechApi = new SpeechApi($client);
+        $this->converseApi = new ConverseApi($client);
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *             You should use the ConverseApi::converse() instead
+     *
      * @param string $sessionId
      * @param string $text
      * @param Context|null $context
@@ -29,17 +53,13 @@ class Api
      */
     public function getConverseNextStep($sessionId, $text, Context $context = null)
     {
-        $query = [
-            'session_id' => $sessionId,
-            'q' => $text,
-        ];
-
-        $response = $this->client->send('POST', '/converse', $context, $query);
-
-        return $this->decodeResponse($response);
+        return $this->converseApi->converse($sessionId, $text, $context);
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *             You should use the MessageApi::extractMeaning() instead
+     *
      * @param string $text
      * @param Context|null $context
      * @param array $extraParams
@@ -48,20 +68,13 @@ class Api
      */
     public function getIntentByText($text, Context $context = null, array $extraParams = [])
     {
-        $query = array_merge($extraParams, [
-            'q' => $text,
-        ]);
-
-        if (null !== $context) {
-            $query['context'] = json_encode($context);
-        }
-
-        $response = $this->client->get('/message', $query);
-
-        return $this->decodeResponse($response);
+        return $this->messageApi->extractMeaning($text, $context, $extraParams);
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *             You should use the SpeechApi::extractMeaning() instead
+     *
      * @param string|resource $file
      * @param array|null $context
      * @param array $queryParams
@@ -70,21 +83,12 @@ class Api
      */
     public function getIntentBySpeech($file, Context $context = null, array $queryParams = [])
     {
-        if (!$file || (!is_resource($file) && !is_readable($file))) {
-            throw new \InvalidArgumentException('$file argument must be a readable file path or a valid resource');
-        }
-
-        if (null !== $context) {
-            $queryParams['context'] = json_encode($context);
-        }
-
-        $file = is_resource($file) ? $file : fopen($file, 'r');
-        $response = $this->client->send('POST', '/speech', $file, $queryParams);
-
-        return $this->decodeResponse($response);
+        return $this->speechApi->extractMeaning($file, $context, $queryParams);
     }
 
     /**
+     * @deprecated This method is deprecated as of 0.1 and will be removed in 1.0.
+     *
      * @param string $messageId
      *
      * @return array|null

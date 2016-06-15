@@ -17,7 +17,7 @@ class Client
     /*
      * API Version
      */
-    const DEFAULT_API_VERSION = '20160330';
+    const DEFAULT_API_VERSION = '20160526';
 
     /**
      * Request default timeout

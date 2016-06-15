@@ -1,11 +1,11 @@
 <?php
 
-namespace spec\Tgallice\Wit\Api;
+namespace spec\Tgallice\Wit;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Tgallice\Wit\ActionMapping;
-use Tgallice\Wit\Api;
+use Tgallice\Wit\ConverseApi;
 use Tgallice\Wit\Exception\ConversationException;
 use Tgallice\Wit\Exception\MaxIterationException;
 use Tgallice\Wit\Model\Context;
@@ -35,14 +35,14 @@ class ConversationSpec extends ObjectBehavior
         ]
     ];
 
-    function let(Api $api, ActionMapping $actionMapping)
+    function let(ConverseApi $api, ActionMapping $actionMapping)
     {
         $this->beConstructedWith($api, $actionMapping);
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Tgallice\Wit\Api\Conversation');
+        $this->shouldHaveType('Tgallice\Wit\Conversation');
     }
 
     function it_converse_automatically_and_return_the_last_context($api, $actionMapping)
@@ -50,15 +50,15 @@ class ConversationSpec extends ObjectBehavior
 
         $context = new Context();
 
-        /* @var Api $api */
-        $api->getConverseNextStep('session_id', 'my text', $context)->willReturn($this->stepData[Step::TYPE_MERGE]);
+        /* @var ConverseApi $api */
+        $api->converse('session_id', 'my text', $context)->willReturn($this->stepData[Step::TYPE_MERGE]);
 
         /* @var ActionMapping $actionMapping */
         $expectedContext = new Context($this->stepData[Step::TYPE_MERGE]['entities']);
         $actionMapping->merge('session_id', $context, $this->stepData[Step::TYPE_MERGE]['entities'])->willReturn($expectedContext);
 
         // Second step
-        $api->getConverseNextStep('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_MESSAGE]);
+        $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_MESSAGE]);
         $actionMapping->say('session_id', $this->stepData[Step::TYPE_MESSAGE]['msg'], $expectedContext)->shouldBeCalled();
 
         $this->converse('session_id', 'my text', $context)->shouldReturn($expectedContext);
@@ -70,12 +70,12 @@ class ConversationSpec extends ObjectBehavior
         $context = new Context();
 
         // First step
-        $api->getConverseNextStep('session_id', 'my text', $context)->willReturn($this->stepData[Step::TYPE_MERGE]);
+        $api->converse('session_id', 'my text', $context)->willReturn($this->stepData[Step::TYPE_MERGE]);
 
         /* @var ActionMapping $actionMapping */
         $expectedContext = new Context($this->stepData[Step::TYPE_MERGE]['entities']);
         $actionMapping->merge('session_id', $context, $this->stepData[Step::TYPE_MERGE]['entities'])->willReturn($expectedContext);
-        $api->getConverseNextStep('session_id', null, $expectedContext)->shouldNotBeCalled();
+        $api->converse('session_id', null, $expectedContext)->shouldNotBeCalled();
 
         // Trigger the error on max iteration
         $actionMapping
@@ -91,11 +91,11 @@ class ConversationSpec extends ObjectBehavior
 
     function it_delegate_the_action_to_execute($api, $actionMapping) {
         // First step
-        $api->getConverseNextStep('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_ACTION]);
+        $api->converse('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_ACTION]);
         $actionMapping->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class))->willReturn(new Context());
 
         // Second Step
-        $api->getConverseNextStep('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_STOP]);
+        $api->converse('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping->stop('session_id', Argument::type(Context::class))->shouldBeCalled();
 
         $this->converse('session_id');
@@ -103,7 +103,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_trigger_error_action_on_malformed_step($api, $actionMapping)
     {
-        $api->getConverseNextStep('session_id', null, Argument::type(Context::class))->willReturn(null);
+        $api->converse('session_id', null, Argument::type(Context::class))->willReturn(null);
         $actionMapping
             ->error(
                 'session_id',
@@ -118,7 +118,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_trigger_error_action_if_error_returned_from_the_api($api, $actionMapping)
     {
-        $api->getConverseNextStep('session_id', null, Argument::type(Context::class))->willReturn([
+        $api->converse('session_id', null, Argument::type(Context::class))->willReturn([
             'error' => 'error message'
         ]);
         $actionMapping
@@ -135,7 +135,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_delegate_action_step_execution($api, $actionMapping)
     {
-        $api->getConverseNextStep('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_ACTION]);
+        $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_ACTION]);
 
         $expectedContext = new Context();
         $expectedContext->add('custom', 'value');
@@ -144,7 +144,7 @@ class ConversationSpec extends ObjectBehavior
             ->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class))
             ->willReturn($expectedContext);
 
-        $api->getConverseNextStep('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
+        $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
             ->stop('session_id', $expectedContext)
             ->shouldBeCalled();
@@ -154,7 +154,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_delegate_stop_execution($api, $actionMapping)
     {
-        $api->getConverseNextStep('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_STOP]);
+        $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
             ->stop('session_id', Argument::type(Context::class))
             ->shouldBeCalled();
@@ -166,7 +166,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_delegate_message_step_execution($api, $actionMapping)
     {
-        $api->getConverseNextStep('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MESSAGE]);
+        $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MESSAGE]);
         $actionMapping
             ->say('session_id', 'message', Argument::type(Context::class))
             ->shouldBeCalled();
@@ -178,7 +178,7 @@ class ConversationSpec extends ObjectBehavior
 
     function it_delegate_merge_execution($api, $actionMapping)
     {
-        $api->getConverseNextStep('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MERGE]);
+        $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MERGE]);
 
         $expectedContext = new Context();
         $expectedContext->add('custom', 'value');
@@ -187,7 +187,7 @@ class ConversationSpec extends ObjectBehavior
             ->merge('session_id', Argument::type(Context::class), $this->stepData[Step::TYPE_MERGE]['entities'])
             ->willReturn($expectedContext);
 
-        $api->getConverseNextStep('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
+        $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
             ->stop('session_id', Argument::type(Context::class))
             ->shouldBeCalled();

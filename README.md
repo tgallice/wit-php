@@ -40,19 +40,19 @@ $intent = json_decode((string) $response->getBody(), true);
 
 ```
 
-You can used the `Api` class which provided some shortcut to call the wit api:
+You can used the `Message` api class to extract meaning of a sentence:
 
 ```php
 
 require_once __DIR__.'/vendor/autoload.php';
 
 use Tgallice\Wit\Client;
-use Tgallice\Wit\Api;
+use Tgallice\Wit\MessageApi;
 
 $client = new Client('app_token');
-$api = new Api($client);
+$api = new MessageApi($client);
 
-$intent = $api->getIntentByText('Hello I live in London');
+$meaning = $api->extractMeaning('Hello I live in London');
 
 ```
 
@@ -96,12 +96,12 @@ And using it in the `Conversation` class.
 require_once __DIR__.'/vendor/autoload.php';
 
 use Tgallice\Wit\Client;
-use Tgallice\Wit\Api;
-use Tgallice\Wit\Api\Conversation;
+use Tgallice\Wit\ConverseApi;
+use Tgallice\Wit\Conversation;
 use Custom\MyActionMapping;
 
 $client = new Client('app_token');
-$api = new Api($client);
+$api = new ConverseApi($client);
 $actionMapping = new MyActionMapping();
 $conversation = new Conversation($api, $actionMapping);
 
@@ -112,12 +112,6 @@ $context = $conversation->converse('session_id', 'Hello I live in London');
 `Conversation::converse()` return the last available `Context`.
 
 Some examples are describe in the [tgallice/php-wit-example][2] repository.
-
-## TODO
-
-- [ ] Create dedicated Api class for Intent
-- [ ] Create dedicated Api class for Entity
-- [ ] Response Model
 
 [1]: https://wit.ai
 [2]: https://github.com/tgallice/wit-php-example
