@@ -113,6 +113,7 @@ class Conversation
                 break;
             case $step instanceof Message:
                 $this->actionMapping->say($sessionId, $step->getMessage(), $context);
+                $context = $this->converse($sessionId, null, $context, --$currentIteration);
                 break;
             case $step instanceof Action:
                 $newContext = $this->actionMapping->action($sessionId, $step->getAction(), $context);
