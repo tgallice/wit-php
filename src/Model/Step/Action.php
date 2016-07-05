@@ -17,13 +17,19 @@ class Action implements Step
     private $confidence;
 
     /**
+     * @var array
+     */
+    private $entities;
+
+    /**
      * @param string $action
      * @param float $confidence
      */
-    public function __construct($action, $confidence)
+    public function __construct($action, $confidence, $entities)
     {
         $this->action = $action;
         $this->confidence = (float) $confidence;
+        $this->entities = $entities;
     }
 
     /**
@@ -48,5 +54,12 @@ class Action implements Step
     public function getType()
     {
         return Step::TYPE_ACTION;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntities() {
+        return $this->entities;
     }
 }
