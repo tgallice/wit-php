@@ -36,7 +36,7 @@ class StepFactory
      */
     public static function createActionStep(array $step)
     {
-        return new Action($step['action'], $step['confidence']);
+        return new Action($step['action'], $step['confidence'], $step['entities']);
     }
 
     /**
