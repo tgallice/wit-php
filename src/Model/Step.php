@@ -19,4 +19,9 @@ interface Step
      * @return float
      */
     public function getConfidence();
+
+    /**
+     * @return array
+     */
+    public function getEntities();
 }
