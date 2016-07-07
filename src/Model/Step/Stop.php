@@ -4,34 +4,13 @@ namespace Tgallice\Wit\Model\Step;
 
 use Tgallice\Wit\Model\Step;
 
-class Stop implements Step
+class Stop extends AbstractStep
 {
-    /**
-     * @var float
-     */
-    private $confidence;
-
     /**
      * @param float $confidence
      */
     public function __construct($confidence)
     {
-        $this->confidence = (float) $confidence;
-    }
-
-    /**
-     * @return float
-     */
-    public function getConfidence()
-    {
-        return $this->confidence;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return Step::TYPE_STOP;
+        parent::__construct(Step::TYPE_STOP, $confidence);
     }
 }

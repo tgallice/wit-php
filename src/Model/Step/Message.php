@@ -4,13 +4,8 @@ namespace Tgallice\Wit\Model\Step;
 
 use Tgallice\Wit\Model\Step;
 
-class Message implements Step
+class Message extends AbstractStep
 {
-    /**
-     * @var float
-     */
-    private $confidence;
-
     /**
      * @var string
      */
@@ -19,10 +14,11 @@ class Message implements Step
     /**
      * @param string $message
      * @param float $confidence
+     * @param array $entities
      */
-    public function __construct($message, $confidence)
+    public function __construct($message, $confidence, array $entities = [])
     {
-        $this->confidence = (float) $confidence;
+        parent::__construct(Step::TYPE_MESSAGE, $confidence, $entities);
         $this->message = $message;
     }
 
@@ -32,21 +28,5 @@ class Message implements Step
     public function getMessage()
     {
         return $this->message;
-    }
-
-    /**
-     * @return float
-     */
-    public function getConfidence()
-    {
-        return $this->confidence;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return Step::TYPE_MESSAGE;
     }
 }
