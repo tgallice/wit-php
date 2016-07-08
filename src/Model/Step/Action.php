@@ -4,7 +4,7 @@ namespace Tgallice\Wit\Model\Step;
 
 use Tgallice\Wit\Model\Step;
 
-class Action implements Step
+class Action extends AbstractStep
 {
     /**
      * @var string
@@ -12,18 +12,14 @@ class Action implements Step
     private $action;
 
     /**
-     * @var float
-     */
-    private $confidence;
-
-    /**
      * @param string $action
      * @param float $confidence
+     * @param array $entities
      */
-    public function __construct($action, $confidence)
+    public function __construct($action, $confidence, array $entities = [])
     {
+        parent::__construct(Step::TYPE_ACTION, $confidence, $entities);
         $this->action = $action;
-        $this->confidence = (float) $confidence;
     }
 
     /**
@@ -32,21 +28,5 @@ class Action implements Step
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * @return float
-     */
-    public function getConfidence()
-    {
-        return $this->confidence;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return Step::TYPE_ACTION;
     }
 }

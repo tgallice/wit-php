@@ -11,17 +11,19 @@ abstract class ActionMapping
      * @param string $sessionId
      * @param string $actionName
      * @param Context $context
-     *
+     * @param array $entities
+     * 
      * @return Context
      */
-    abstract public function action($sessionId, $actionName, Context $context);
+    abstract public function action($sessionId, $actionName, Context $context, array $entities = []);
 
     /**
      * @param string $sessionId
-     * @param Context $context
      * @param string $message
+     * @param Context $context
+     * @param array $entities
      */
-    abstract public function say($sessionId, $message, Context $context);
+    abstract public function say($sessionId, $message, Context $context, array $entities = []);
 
     /**
      * @param string $sessionId
@@ -38,7 +40,7 @@ abstract class ActionMapping
      *
      * @return Context
      */
-    abstract public function merge($sessionId, Context $context, array $entities);
+    abstract public function merge($sessionId, Context $context, array $entities = []);
 
     /**
      * @param string $sessionId

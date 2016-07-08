@@ -32,11 +32,21 @@ class StepFactory
     /**
      * @param array $step
      *
+     * @return array
+     */
+    private static function getEntitiesFromStepData(array $step = [])
+    {
+        return isset($step['entities']) ? $step['entities'] : [];
+    }
+
+    /**
+     * @param array $step
+     *
      * @return Action
      */
     public static function createActionStep(array $step)
     {
-        return new Action($step['action'], $step['confidence']);
+        return new Action($step['action'], $step['confidence'], self::getEntitiesFromStepData($step));
     }
 
     /**
@@ -46,7 +56,7 @@ class StepFactory
      */
     public static function createMergeStep(array $step)
     {
-        return new Merge($step['entities'], $step['confidence']);
+        return new Merge(self::getEntitiesFromStepData($step), $step['confidence']);
     }
 
     /**
@@ -56,7 +66,7 @@ class StepFactory
      */
     public static function createMessageStep(array $step)
     {
-        return new Message($step['msg'], $step['confidence']);
+        return new Message($step['msg'], $step['confidence'], self::getEntitiesFromStepData($step));
     }
 
     /**

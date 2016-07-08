@@ -59,7 +59,12 @@ class ConversationSpec extends ObjectBehavior
 
         // Second step
         $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_MESSAGE]);
-        $actionMapping->say('session_id', $this->stepData[Step::TYPE_MESSAGE]['msg'], $expectedContext)->shouldBeCalled();
+        $actionMapping->say(
+            'session_id',
+            $this->stepData[Step::TYPE_MESSAGE]['msg'],
+            $expectedContext,
+            Argument::type('array')
+        )->shouldBeCalled();
 
         $this->converse('session_id', 'my text', $context)->shouldReturn($expectedContext);
     }
@@ -141,7 +146,7 @@ class ConversationSpec extends ObjectBehavior
         $expectedContext->add('custom', 'value');
 
         $actionMapping
-            ->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class))
+            ->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class), Argument::type('array'))
             ->willReturn($expectedContext);
 
         $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
@@ -168,7 +173,7 @@ class ConversationSpec extends ObjectBehavior
     {
         $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MESSAGE]);
         $actionMapping
-            ->say('session_id', 'message', Argument::type(Context::class))
+            ->say('session_id', 'message', Argument::type(Context::class), Argument::type('array'))
             ->shouldBeCalled();
 
         $context = new Context();
