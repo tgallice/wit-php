@@ -10,6 +10,11 @@ use Tgallice\Wit\Model\Location;
 
 class ContextSpec extends ObjectBehavior
 {
+    function let()
+    {
+        $this->beConstructedWith(['field' => 'value']);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType('Tgallice\Wit\Model\Context');
@@ -86,39 +91,35 @@ class ContextSpec extends ObjectBehavior
         $this->getTimezone()->shouldReturn('timezone');
     }
 
-    function it_can_add_custom_context_field()
+    function it_can_set_custom_context_field()
     {
-        $context = $this->add('context', 'value');
-        $context->get('context')->shouldReturn('value');
+        $context = $this->set('custom', 'value');
+        $context->get('custom')->shouldReturn('value');
     }
 
     function it_can_remove_a_context_field()
     {
-        $context = $this->add('context', 'value');
-        $context->get('context')->shouldReturn('value');
+        $this->get('field')->shouldReturn('value');
 
-        $context = $this->remove('context');
-        $context->get('context')->shouldReturn(null);
+        $context = $this->remove('field');
+        $context->get('field')->shouldReturn(null);
     }
 
     function it_can_check_presence_of_a_context_field()
     {
-        $context = $this->add('context', 'value');
-        $context->has('context')->shouldReturn(true);
-        $context->has('wrong_context')->shouldReturn(false);
+        $this->has('field')->shouldReturn(true);
+        $this->has('wrong_context')->shouldReturn(false);
     }
 
     function it_is_immutable()
     {
-        $context = $this->add('context', 'value');
-        $newContext = $context->add('context', 'value');
-        $newContext2 = $newContext->remove('context');
+        $newContext = $this->set('field', 'value');
+        $newContext2 = $newContext->remove('field');
 
-        $context->shouldHaveType(Context::class);
-        $context->shouldBeLike($newContext);
-        $context->shouldNotBeEqualTo($newContext);
-        $newContext->get('context')->shouldReturn('value');
-        $newContext2->has('context')->shouldReturn(false);
+        $this->shouldBeLike($newContext);
+        $this->shouldNotBeEqualTo($newContext);
+        $newContext->get('field')->shouldReturn('value');
+        $newContext2->has('field')->shouldReturn(false);
     }
 
     function it_must_be_json_serializable()

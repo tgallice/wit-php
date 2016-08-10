@@ -77,7 +77,7 @@ final class Context implements \JsonSerializable
      *
      * @return Context
      */
-    public function add($name, $value)
+    public function set($name, $value)
     {
         $newData = $this->data;
         $newData[$name] = $value;
