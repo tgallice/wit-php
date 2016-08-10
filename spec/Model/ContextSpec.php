@@ -14,19 +14,20 @@ class ContextSpec extends ObjectBehavior
         $this->shouldHaveType('Tgallice\Wit\Model\Context');
     }
 
-    function it_has_a_reference_date()
+    function it_has_no_default_reference_time()
     {
-        $date = new \DateTime();
-
-        $this->beConstructedWith([
-            'reference_date' => $date,
-        ]);
-        $this->getReferenceDate()->shouldReturn($date->format(DATE_ISO8601));
+        $this->getReferenceTime()->shouldReturn(null);
     }
 
-    function it_has_a_default_reference_date()
+    function it_can_define_a_reference_time()
     {
-        $this->getReferenceDate()->shouldContain((new \DateTime())->format(DATE_ISO8601));
+        $date = new \DateTime();
+        $asString = $date->format(DATE_ISO8601);
+
+        $this->beConstructedWith([
+            'reference_time' => $asString,
+        ]);
+        $this->getReferenceTime()->shouldReturn($asString);
     }
 
     function it_has_no_default_location()
@@ -76,9 +77,9 @@ class ContextSpec extends ObjectBehavior
     function it_can_define_timezone()
     {
         $this->beConstructedWith([
-            'timezone' => 'timezone',
+            'timezone' => 'europe/paris',
         ]);
-        $this->getTimezone()->shouldReturn('timezone');
+        $this->getTimezone()->shouldReturn('europe/paris');
     }
 
     function it_can_add_custom_context_field()
@@ -100,6 +101,13 @@ class ContextSpec extends ObjectBehavior
         $this->add('context', 'value');
         $this->has('context')->shouldReturn(true);
         $this->has('wrong_context')->shouldReturn(false);
+    }
+
+    function it_can_check_if_context_is_empty()
+    {
+        $this->isEmpty()->shouldReturn(true);
+        $this->add('context', 'value');
+        $this->isEmpty()->shouldReturn(false);
     }
 
     function it_must_be_json_serializable()

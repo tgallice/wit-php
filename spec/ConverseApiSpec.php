@@ -45,7 +45,7 @@ class ConverseApiSpec extends ObjectBehavior
             }
         ';
 
-        $context = new Context();
+        $context = new Context(['field' =>'value']);
         $query = [
             'session_id' => 'session_id',
             'q' => 'my message',
@@ -55,5 +55,21 @@ class ConverseApiSpec extends ObjectBehavior
         $client->send('POST', '/converse', $context, $query)->willReturn($response);
 
         $this->converse('session_id', 'my message', $context)->shouldReturn(json_decode($body, true));
+    }
+
+    function it_should_not_send_empty_context($client, ResponseInterface $response)
+    {
+        $body = '{}';
+
+        $context = new Context();
+        $query = [
+            'session_id' => 'session_id',
+            'q' => 'my message',
+        ];
+
+        $response->getBody()->willReturn($body);
+        $client->send('POST', '/converse', null, $query)->willReturn($response);
+
+        $this->converse('session_id', 'my message', $context);
     }
 }
