@@ -21,12 +21,22 @@ class ConverseApi
         $this->client = $client;
     }
 
-    public function converse($sessionId, $text, Context $context = null)
+    /**
+     * @param string $sessionId
+     * @param string|null $text
+     * @param Context|null $context
+     *
+     * @return array
+     */
+    public function converse($sessionId, $text = null, Context $context = null)
     {
         $query = [
             'session_id' => $sessionId,
-            'q' => $text,
         ];
+
+        if (!empty($text)) {
+            $query['q'] = $text;
+        }
 
         $response = $this->client->send('POST', '/converse', $context, $query);
 
