@@ -2,7 +2,7 @@
 
 namespace Tgallice\Wit\Model;
 
-class Location implements \JsonSerializable
+final class Location implements \JsonSerializable
 {
     /**
      * @var float

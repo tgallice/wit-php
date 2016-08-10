@@ -49,8 +49,7 @@ class ConversationSpec extends ObjectBehavior
     {
         $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MERGE]);
 
-        $expectedContext = new Context();
-        $expectedContext->add('custom', 'value');
+        $expectedContext = new Context(['custom' => 'value']);
 
         $actionMapping
             ->merge('session_id', Argument::type(Context::class), $this->stepData[Step::TYPE_MERGE]['entities'])
@@ -149,8 +148,7 @@ class ConversationSpec extends ObjectBehavior
     {
         $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_ACTION]);
 
-        $expectedContext = new Context();
-        $expectedContext->add('custom', 'value');
+        $expectedContext = new Context(['custom' => 'value']);
 
         $actionMapping
             ->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class), Argument::type('array'))
@@ -197,8 +195,7 @@ class ConversationSpec extends ObjectBehavior
     {
         $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MERGE]);
 
-        $expectedContext = new Context();
-        $expectedContext->add('custom', 'value');
+        $expectedContext = new Context(['custom' => 'value']);
 
         $actionMapping
             ->merge('session_id', Argument::type(Context::class), $this->stepData[Step::TYPE_MERGE]['entities'])

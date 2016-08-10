@@ -2,7 +2,7 @@
 
 namespace Tgallice\Wit\Model;
 
-class Entity implements \JsonSerializable
+final class Entity implements \JsonSerializable
 {
     const LOOKUP_TRAIT = 'trait';
 

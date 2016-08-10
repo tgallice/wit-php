@@ -41,7 +41,7 @@ class EntityApiSpec extends ObjectBehavior
         $this->get()->shouldReturn($expected);
     }
 
-    function it_should_create_entities($client, ResponseInterface $response, EntityValue $entityValue)
+    function it_should_create_entities($client, ResponseInterface $response)
     {
         $body = '
             {
@@ -53,6 +53,8 @@ class EntityApiSpec extends ObjectBehavior
                 "id" : "5418abc7-cc68-4073-ae9e-3a5c3c81d965"
             }
         ';
+
+        $entityValue = new EntityValue('value');
 
         $expected = json_decode($body, true);
         $response->getBody()->willReturn($body);
@@ -100,7 +102,7 @@ class EntityApiSpec extends ObjectBehavior
         $this->get('first_name')->shouldReturn($expected);
     }
 
-    function it_should_update_an_entity($client, ResponseInterface $response, EntityValue $entityValue)
+    function it_should_update_an_entity($client, ResponseInterface $response)
     {
         $body = '
             {
@@ -112,6 +114,8 @@ class EntityApiSpec extends ObjectBehavior
                 "lookups" : [ "keywords" ]
             }
         ';
+
+        $entityValue = new EntityValue('value');
 
         $expected = json_decode($body, true);
         $response->getBody()->willReturn($body);
@@ -139,7 +143,7 @@ class EntityApiSpec extends ObjectBehavior
         $this->delete('favorite_city')->shouldReturn($expected);
     }
 
-    function it_should_add_a_value_to_an_entity($client, ResponseInterface $response, EntityValue $entityValue)
+    function it_should_add_a_value_to_an_entity($client, ResponseInterface $response)
     {
         $body = '
             {
@@ -152,6 +156,8 @@ class EntityApiSpec extends ObjectBehavior
                 "name" : "favorite_city"
             }
         ';
+
+        $entityValue = new EntityValue('value');
 
         $expected = json_decode($body, true);
         $response->getBody()->willReturn($body);
