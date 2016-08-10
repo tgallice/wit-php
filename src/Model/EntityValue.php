@@ -2,7 +2,7 @@
 
 namespace Tgallice\Wit\Model;
 
-class EntityValue implements \JsonSerializable
+final class EntityValue implements \JsonSerializable
 {
     /**
      * @var string

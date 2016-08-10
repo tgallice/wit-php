@@ -2,7 +2,10 @@
 
 namespace Tgallice\Wit\Model;
 
-class Context implements \JsonSerializable
+/**
+ * Context Value Object
+ */
+final class Context implements \JsonSerializable
 {
     /**
      * @var array
@@ -16,10 +19,10 @@ class Context implements \JsonSerializable
     {
         // Ensure the refenre_date field
         if (empty($data['reference_date'])) {
-            $data['reference_date'] = new \DateTime();
+            $data['reference_date'] = new \DateTimeImmutable();
         }
 
-        if ($data['reference_date'] instanceof \DateTime) {
+        if ($data['reference_date'] instanceof \DateTimeInterface) {
             $data['reference_date'] = $data['reference_date']->format(DATE_ISO8601);
         }
 
@@ -71,10 +74,15 @@ class Context implements \JsonSerializable
     /**
      * @param string $name
      * @param mixed $value
+     *
+     * @return Context
      */
-    public function add($name, $value)
+    public function set($name, $value)
     {
-        $this->data[$name] = $value;
+        $newData = $this->data;
+        $newData[$name] = $value;
+
+        return new self($newData);
     }
 
     /**
@@ -89,10 +97,15 @@ class Context implements \JsonSerializable
 
     /**
      * @param string $name
+     *
+     * @return Context
      */
     public function remove($name)
     {
-        unset($this->data[$name]);
+        $newData = $this->data;
+        unset($newData[$name]);
+
+        return new self($newData);
     }
 
     /**

@@ -29,8 +29,10 @@ class EntitySpec extends ObjectBehavior
         $this->getDescription()->shouldReturn('description');
     }
 
-    function it_has_values(EntityValue $entityValue)
+    function it_has_values()
     {
+        $entityValue = new EntityValue('value');
+
         $this->beConstructedWith('id', [$entityValue]);
         $this->getValues()->shouldEqual([$entityValue]);
     }

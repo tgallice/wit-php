@@ -40,8 +40,10 @@ class ConversationExceptionSpec extends ObjectBehavior
         $this->getContext()->shouldReturn(null);
     }
 
-    function it_can_have_a_context(Context $context)
+    function it_can_have_a_context()
     {
+        $context = new Context();
+
         $this->beConstructedWith('error message', null, $context);
         $this->getContext()->shouldReturn($context);
     }
