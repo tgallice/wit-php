@@ -60,10 +60,10 @@ class EntityApiSpec extends ObjectBehavior
             'doc' => 'description',
             'id' => 'favorite_city',
             'values' => [$entityValue],
-            'lookups' => 'lookups',
+            'lookups' => ['lookups'],
         ])->willReturn($response);
 
-        $this->create('favorite_city', [$entityValue], 'description', 'lookups')->shouldReturn($expected);
+        $this->create('favorite_city', [$entityValue], 'description', ['lookups'])->shouldReturn($expected);
     }
 
     function it_should_get_an_entity($client, ResponseInterface $response)
