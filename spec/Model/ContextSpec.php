@@ -3,7 +3,6 @@
 namespace spec\Tgallice\Wit\Model;
 
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 use Tgallice\Wit\Model\Entity;
 use Tgallice\Wit\Model\Location;
 
@@ -21,13 +20,9 @@ class ContextSpec extends ObjectBehavior
 
     function it_can_define_a_reference_time()
     {
-        $date = new \DateTime();
-        $asString = $date->format(DATE_ISO8601);
-
-        $this->beConstructedWith([
-            'reference_time' => $asString,
-        ]);
-        $this->getReferenceTime()->shouldReturn($asString);
+        $dt = new \DateTimeImmutable();
+        $this->setReferenceTime($dt);
+        $this->getReferenceTime()->shouldReturn($dt->format(DATE_ISO8601));
     }
 
     function it_has_no_default_location()
@@ -74,12 +69,11 @@ class ContextSpec extends ObjectBehavior
         $this->getTimezone()->shouldReturn(null);
     }
 
-    function it_can_define_timezone()
+    function it_can_define_a_timezone()
     {
-        $this->beConstructedWith([
-            'timezone' => 'europe/paris',
-        ]);
-        $this->getTimezone()->shouldReturn('europe/paris');
+        $timezone = 'Europe/Paris';
+        $this->setTimezone($timezone);
+        $this->getTimezone()->shouldReturn($timezone);
     }
 
     function it_can_add_custom_context_field()
@@ -113,6 +107,7 @@ class ContextSpec extends ObjectBehavior
     function it_must_be_json_serializable()
     {
         $this->shouldHaveType(\JsonSerializable::class);
+        $this->add('custom', 'value');
         $serialized = json_encode($this->getWrappedObject());
         $this->jsonSerialize()->shouldReturn(json_decode($serialized, true));
     }

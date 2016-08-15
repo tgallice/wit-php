@@ -14,7 +14,6 @@ class Context implements \JsonSerializable
      */
     public function __construct($data = [])
     {
-
         $this->data = $data;
     }
 
@@ -35,13 +34,24 @@ class Context implements \JsonSerializable
     }
 
     /**
-     * Return the reference date in the ISO8601 format
+     * Return the reference date in ISO8601 format
      *
      * @return string|null
      */
     public function getReferenceTime()
     {
         return $this->getContextField('reference_time');
+    }
+
+    /**
+     * Set the reference time in ISO8601 format
+     *
+     * @param \DateTimeInterface $dateTime
+     */
+    public function setReferenceTime(\DateTimeInterface $dateTime)
+    {
+        $dt = $dateTime->format(DATE_ISO8601);
+        $this->add('reference_time', $dt);
     }
 
     /**
@@ -58,6 +68,15 @@ class Context implements \JsonSerializable
     public function getTimezone()
     {
         return $this->getContextField('timezone');
+    }
+
+    /**
+     * @param string $timezone Timezone identifier e.g 'Europe/Berlin'
+     */
+    public function setTimezone($timezone)
+    {
+        $tz = new \DateTimeZone($timezone);
+        $this->add('timezone', $tz->getName());
     }
 
     /**
