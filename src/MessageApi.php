@@ -21,17 +21,17 @@ class MessageApi
     /**
      * @param string $text
      * @param Context|null $context
-     * @param array $extraParams
+     * @param array $queryParams
      *
      * @return mixed
      */
-    public function extractMeaning($text, Context $context = null, array $extraParams = [])
+    public function extractMeaning($text, Context $context = null, array $queryParams = [])
     {
-        $query = array_merge($extraParams, [
+        $query = array_merge($queryParams, [
             'q' => $text,
         ]);
 
-        if (null !== $context) {
+        if (null !== $context && !$context->isEmpty()) {
             $query['context'] = json_encode($context);
         }
 

@@ -34,7 +34,7 @@ class SpeechApi
             throw new \InvalidArgumentException('$file argument must be a readable file path or a valid resource');
         }
 
-        if (null !== $context) {
+        if (null !== $context && !$context->isEmpty()) {
             $queryParams['context'] = json_encode($context);
         }
 

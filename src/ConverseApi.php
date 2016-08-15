@@ -38,7 +38,14 @@ class ConverseApi
             $query['q'] = $text;
         }
 
-        $response = $this->client->send('POST', '/converse', $context, $query);
+        $body = null;
+
+        // Don't send empty array
+        if (null !== $context && !$context->isEmpty()) {
+            $body = $context;
+        }
+
+        $response = $this->client->send('POST', '/converse', $body, $query);
 
         return $this->decodeResponse($response);
     }

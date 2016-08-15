@@ -140,7 +140,7 @@ class EntityApi
      *
      * @return mixed
      */
-    public function create($entityId, array $entityValues = [], $description = null, $lookups = [Entity::LOOKUP_KEYWORDS])
+    public function create($entityId, array $entityValues = [], $description = null, array $lookups = [Entity::LOOKUP_KEYWORDS])
     {
         $data = [
             'id' => $entityId,

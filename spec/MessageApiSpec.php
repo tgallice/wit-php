@@ -23,7 +23,7 @@ class MessageApiSpec extends ObjectBehavior
 
     function it_should_extract_meaning_of_sentence($client, $response)
     {
-        $context = new Context();
+        $context = new Context(['data' => 'value']);
         $query = [
             'q' => 'my text',
             'context' => json_encode($context),
@@ -39,8 +39,7 @@ class MessageApiSpec extends ObjectBehavior
     {
         $context = new Context();
         $query = [
-            'q' => 'my text',
-            'context' => json_encode($context),
+            'q' => 'my text'
         ];
 
         $client->get('/message', $query)->willReturn($response);

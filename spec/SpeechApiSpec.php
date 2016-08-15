@@ -24,7 +24,7 @@ class SpeechApiSpec extends ObjectBehavior
     function it_should_extract_meaning_of_speech($client, ResponseInterface $response)
     {
         $resource = fopen('php://temp', 'r+');
-        $context = new Context();
+        $context = new Context(['data' => 'value']);
         $query = ['context' => json_encode($context), 'foo' => 'bar'];
 
         $client->send('POST', '/speech', $resource, $query)->willReturn($response);
@@ -37,7 +37,7 @@ class SpeechApiSpec extends ObjectBehavior
     function it_should_extract_meaning_of_speech_when_its_filename_given($client, $response)
     {
         $context = new Context();
-        $query = ['context' => json_encode($context), 'foo' => 'bar'];
+        $query = ['foo' => 'bar'];
         $file = tempnam(sys_get_temp_dir(), 'test');
 
         $client->send('POST', '/speech', Argument::that(function ($argument) {
