@@ -66,22 +66,25 @@ First, you need to create an `ActionMapping` class to customize the actions beha
 
 namespace Custom;
 
+use Tgallice\Wit\Model\Step\Action;
+use Tgallice\Wit\Model\Step\Message;
+
 class MyActionMapping extends ActionMapping
 {
     /**
      * @inheritdoc
      */
-    public function action($sessionId, $actionName, Context $context)
+    public function action($sessionId, Context $context, Action $step)
     {
-        return call_user_func_array(array($this, $actionName), array($sessionId, $context));
+        return call_user_func_array(array($this, $step->getAction()), array($sessionId, $context));
     }
 
     /**
      * @inheritdoc
      */
-    public function say($sessionId, $message, Context $context)
+    public function say($sessionId, Context $context, Message $step)
     {
-        echo $message;
+        echo $step->getMessage();
     }
 
      ....

@@ -10,6 +10,10 @@ use Tgallice\Wit\Exception\ConversationException;
 use Tgallice\Wit\Exception\MaxIterationException;
 use Tgallice\Wit\Model\Context;
 use Tgallice\Wit\Model\Step;
+use Tgallice\Wit\Model\Step\Action;
+use Tgallice\Wit\Model\Step\Merge;
+use Tgallice\Wit\Model\Step\Message;
+use Tgallice\Wit\Model\Step\Stop;
 
 class ConversationSpec extends ObjectBehavior
 {
@@ -51,24 +55,31 @@ class ConversationSpec extends ObjectBehavior
 
         $expectedContext = new Context();
         $expectedContext->add('custom', 'value');
+        $data = $this->stepData[Step::TYPE_MERGE];
 
         $actionMapping
-            ->merge('session_id', Argument::type(Context::class), $this->stepData[Step::TYPE_MERGE]['entities'])
+            ->merge('session_id', Argument::type(Context::class), Argument::that(function (Merge $step) use ($data) {
+                return $step->getEntities() === $data['entities'];
+            }))
             ->willReturn($expectedContext);
 
+
         $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_MESSAGE]);
+
+        $data = $this->stepData[Step::TYPE_MESSAGE];
         $actionMapping
             ->say(
                 'session_id',
-                $this->stepData[Step::TYPE_MESSAGE]['msg'],
                 Argument::type(Context::class),
-                Argument::type('array')
+                Argument::that(function (Message $step) use ($data) {
+                    return $step->getMessage() === $data['msg'];
+                })
             )
             ->willReturn($expectedContext);
 
         $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
-            ->stop('session_id', Argument::type(Context::class))
+            ->stop('session_id', Argument::type(Context::class), Argument::type(Stop::class))
             ->shouldBeCalled();
 
         $context = new Context();
@@ -84,9 +95,9 @@ class ConversationSpec extends ObjectBehavior
         // First step
         $api->converse('session_id', 'my text', $context)->willReturn($this->stepData[Step::TYPE_MERGE]);
 
-        /* @var ActionMapping $actionMapping */
         $expectedContext = new Context($this->stepData[Step::TYPE_MERGE]['entities']);
-        $actionMapping->merge('session_id', $context, $this->stepData[Step::TYPE_MERGE]['entities'])->willReturn($expectedContext);
+
+        $actionMapping->merge('session_id', $context, Argument::type(Merge::class))->willReturn($expectedContext);
         $api->converse('session_id', null, $expectedContext)->shouldNotBeCalled();
 
         // Trigger the error on max iteration
@@ -104,11 +115,15 @@ class ConversationSpec extends ObjectBehavior
     function it_delegate_the_action_to_execute($api, $actionMapping) {
         // First step
         $api->converse('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_ACTION]);
-        $actionMapping->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class))->willReturn(new Context());
+        $data = $this->stepData[Step::TYPE_ACTION];
+
+        $actionMapping->action('session_id', Argument::type(Context::class), Argument::that(function (Action $step) use ($data) {
+            return $step->getAction() === $data['action'];
+        }))->willReturn(new Context());
 
         // Second Step
         $api->converse('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_STOP]);
-        $actionMapping->stop('session_id', Argument::type(Context::class))->shouldBeCalled();
+        $actionMapping->stop('session_id', Argument::type(Context::class), Argument::type(Stop::class))->shouldBeCalled();
 
         $this->converse('session_id');
     }
@@ -153,12 +168,12 @@ class ConversationSpec extends ObjectBehavior
         $expectedContext->add('custom', 'value');
 
         $actionMapping
-            ->action('session_id', $this->stepData[Step::TYPE_ACTION]['action'], Argument::type(Context::class), Argument::type('array'))
+            ->action('session_id', Argument::type(Context::class),  Argument::type(Action::class))
             ->willReturn($expectedContext);
 
         $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
-            ->stop('session_id', $expectedContext)
+            ->stop('session_id', $expectedContext, Argument::type(Stop::class))
             ->shouldBeCalled();
 
         $this->converse('session_id', 'my text')->shouldReturn($expectedContext);
@@ -168,7 +183,7 @@ class ConversationSpec extends ObjectBehavior
     {
         $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
-            ->stop('session_id', Argument::type(Context::class))
+            ->stop('session_id', Argument::type(Context::class), Argument::type(Stop::class))
             ->shouldBeCalled();
 
         $context = new Context();
@@ -178,14 +193,17 @@ class ConversationSpec extends ObjectBehavior
 
     function it_delegate_message_step_execution($api, $actionMapping)
     {
-        $api->converse('session_id', 'my text', Argument::any())->willReturn($this->stepData[Step::TYPE_MESSAGE]);
+        $data = $this->stepData[Step::TYPE_MESSAGE];
+        $api->converse('session_id', 'my text', Argument::any())->willReturn($data);
         $actionMapping
-            ->say('session_id', 'message', Argument::type(Context::class), Argument::type('array'))
+            ->say('session_id', Argument::type(Context::class), Argument::that(function (Message $step) use ($data) {
+                return $step->getMessage() === $data['msg'];
+            }))
             ->shouldBeCalled();
 
         $api->converse('session_id', null, Argument::type(Context::class))->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
-            ->stop('session_id', Argument::type(Context::class))
+            ->stop('session_id', Argument::type(Context::class), Argument::type(Stop::class))
             ->shouldBeCalled();
 
         $context = new Context();
@@ -201,12 +219,12 @@ class ConversationSpec extends ObjectBehavior
         $expectedContext->add('custom', 'value');
 
         $actionMapping
-            ->merge('session_id', Argument::type(Context::class), $this->stepData[Step::TYPE_MERGE]['entities'])
+            ->merge('session_id', Argument::type(Context::class), Argument::type(Merge::class))
             ->willReturn($expectedContext);
 
         $api->converse('session_id', null, $expectedContext)->willReturn($this->stepData[Step::TYPE_STOP]);
         $actionMapping
-            ->stop('session_id', Argument::type(Context::class))
+            ->stop('session_id', Argument::type(Context::class), Argument::type(Stop::class))
             ->shouldBeCalled();
 
         $this->converse('session_id', 'my text')->shouldReturn($expectedContext);
