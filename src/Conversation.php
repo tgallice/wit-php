@@ -108,19 +108,19 @@ class Conversation
     {
         switch (true) {
             case $step instanceof Merge:
-                $newContext = $this->actionMapping->merge($sessionId, $context, $step->getEntities());
+                $newContext = $this->actionMapping->merge($sessionId, $context, $step);
                 $context = $this->converse($sessionId, null, $newContext, --$currentIteration);
                 break;
             case $step instanceof Message:
-                $this->actionMapping->say($sessionId, $step->getMessage(), $context, $step->getEntities());
+                $this->actionMapping->say($sessionId, $context, $step);
                 $context = $this->converse($sessionId, null, $context, --$currentIteration);
                 break;
             case $step instanceof Action:
-                $newContext = $this->actionMapping->action($sessionId, $step->getAction(), $context, $step->getEntities());
+                $newContext = $this->actionMapping->action($sessionId, $context, $step);
                 $context = $this->converse($sessionId, null, $newContext, --$currentIteration);
                 break;
             case $step instanceof Stop:
-                $this->actionMapping->stop($sessionId, $context);
+                $this->actionMapping->stop($sessionId, $context, $step);
                 break;
         }
 

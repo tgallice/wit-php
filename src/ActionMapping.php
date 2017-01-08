@@ -4,26 +4,29 @@ namespace Tgallice\Wit;
 
 use Tgallice\Wit\Model\Context;
 use Tgallice\Wit\Model\Step;
+use Tgallice\Wit\Model\Step\Action;
+use Tgallice\Wit\Model\Step\Merge;
+use Tgallice\Wit\Model\Step\Message;
+use Tgallice\Wit\Model\Step\Stop;
 
 abstract class ActionMapping
 {
     /**
      * @param string $sessionId
-     * @param string $actionName
      * @param Context $context
-     * @param array $entities
-     * 
+     * @param Action $step
+     *
      * @return Context
      */
-    abstract public function action($sessionId, $actionName, Context $context, array $entities = []);
+    abstract public function action($sessionId, Context $context, Action $step);
 
     /**
      * @param string $sessionId
-     * @param string $message
      * @param Context $context
+     * @param Message $context
      * @param array $entities
      */
-    abstract public function say($sessionId, $message, Context $context, array $entities = []);
+    abstract public function say($sessionId, Context $context, Message $step);
 
     /**
      * @param string $sessionId
@@ -36,15 +39,16 @@ abstract class ActionMapping
     /**
      * @param string $sessionId
      * @param Context $context
-     * @param array $entities
+     * @param Merge $step
      *
      * @return Context
      */
-    abstract public function merge($sessionId, Context $context, array $entities = []);
+    abstract public function merge($sessionId, Context $context, Merge $step);
 
     /**
      * @param string $sessionId
      * @param Context $context
+     * @param Stop $step
      */
-    abstract public function stop($sessionId, Context $context);
+    abstract public function stop($sessionId, Context $context, Stop $step);
 }
