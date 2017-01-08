@@ -3,7 +3,6 @@
 namespace Tgallice\Wit;
 
 use Tgallice\Wit\Model\Context;
-use Tgallice\Wit\Model\Step;
 use Tgallice\Wit\Model\Step\Action;
 use Tgallice\Wit\Model\Step\Merge;
 use Tgallice\Wit\Model\Step\Message;
@@ -24,7 +23,6 @@ abstract class ActionMapping
      * @param string $sessionId
      * @param Context $context
      * @param Message $context
-     * @param array $entities
      */
     abstract public function say($sessionId, Context $context, Message $step);
 
