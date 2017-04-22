@@ -42,6 +42,16 @@ class StepFactory
     /**
      * @param array $step
      *
+     * @return array
+     */
+    private static function getQuickRepliesFromStepData(array $step = [])
+    {
+        return isset($step['quickreplies']) ? $step['quickreplies'] : [];
+    }
+
+    /**
+     * @param array $step
+     *
      * @return Action
      */
     public static function createActionStep(array $step)
@@ -66,7 +76,7 @@ class StepFactory
      */
     public static function createMessageStep(array $step)
     {
-        return new Message($step['msg'], $step['confidence'], self::getEntitiesFromStepData($step));
+        return new Message($step['msg'], $step['confidence'], self::getEntitiesFromStepData($step), self::getQuickRepliesFromStepData($step));
     }
 
     /**
