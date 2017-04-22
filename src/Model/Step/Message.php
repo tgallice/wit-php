@@ -12,14 +12,21 @@ class Message extends AbstractStep
     private $message;
 
     /**
+     * @var array
+     */
+    private $quickreplies;
+
+    /**
      * @param string $message
      * @param float $confidence
      * @param array $entities
+     * @param array $quickreplies
      */
-    public function __construct($message, $confidence, array $entities = [])
+    public function __construct($message, $confidence, array $entities = [], array $quickreplies = [])
     {
-        parent::__construct(Step::TYPE_MESSAGE, $confidence, $entities);
+        parent::__construct(Step::TYPE_MESSAGE, $confidence, $entities, $quickreplies);
         $this->message = $message;
+        $this->quickreplies = $quickreplies;
     }
 
     /**
@@ -28,5 +35,13 @@ class Message extends AbstractStep
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * @return array
+     */
+    public function getQuickReplies()
+    {
+        return $this->quickreplies;
     }
 }
