@@ -26,6 +26,7 @@ class Message extends AbstractStep
     {
         parent::__construct(Step::TYPE_MESSAGE, $confidence, $entities, $quickreplies);
         $this->message = $message;
+        $this->quickreplies = $quickreplies;
     }
 
     /**
